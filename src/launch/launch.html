@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Open with Codex</title>
+    <link rel="stylesheet" href="launch.css" />
+  </head>
+  <body>
+    <main>
+      <p class="eyebrow">Codex Bugbot</p>
+      <h1>Opening Codex</h1>
+      <p id="status">Preparing the Bugbot finding as a Codex prompt.</p>
+      <pre id="preview" hidden></pre>
+      <div class="actions">
+        <button id="desktop" type="button">Open Codex Desktop</button>
+        <button id="web" type="button" class="secondary">Open Codex Web</button>
+        <button id="copy" type="button" class="secondary">Copy prompt</button>
+      </div>
+      <p class="hint">
+        Desktop uses the <code>codex://</code> deep link with this comment as the
+        initial prompt. Web opens chatgpt.com/codex and pastes the same prompt
+        into the composer.
+      </p>
+    </main>
+    <script src="../lib/shared.js"></script>
+    <script src="launch.js"></script>
+  </body>
+</html>
