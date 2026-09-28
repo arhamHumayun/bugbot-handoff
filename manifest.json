@@ -5,7 +5,6 @@
   "version": "1.0.0",
   "action": {
     "default_title": "Open Bugbot in Codex",
-    "default_popup": "src/popup/popup.html",
     "default_icon": {
       "16": "icons/icon16.png",
       "32": "icons/icon32.png",
@@ -19,35 +18,25 @@
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
   },
-  "background": {
-    "service_worker": "src/background.js"
-  },
-  "permissions": ["storage", "clipboardWrite"],
+  "permissions": [
+    "clipboardWrite"
+  ],
   "host_permissions": [
-    "https://github.com/*",
-    "https://chatgpt.com/*",
-    "https://*.chatgpt.com/*"
+    "https://github.com/*"
   ],
   "content_scripts": [
     {
-      "matches": ["https://github.com/*"],
-      "js": ["src/lib/shared.js", "src/github/content.js"],
-      "css": ["src/github/styles.css"],
-      "run_at": "document_idle"
-    },
-    {
       "matches": [
-        "https://chatgpt.com/codex*",
-        "https://chatgpt.com/*/codex*"
+        "https://github.com/*"
       ],
-      "js": ["src/lib/shared.js", "src/codex/content.js"],
+      "js": [
+        "src/lib/shared.js",
+        "src/github/content.js"
+      ],
+      "css": [
+        "src/github/styles.css"
+      ],
       "run_at": "document_idle"
-    }
-  ],
-  "web_accessible_resources": [
-    {
-      "resources": ["src/launch/launch.html"],
-      "matches": ["https://github.com/*"]
     }
   ]
 }

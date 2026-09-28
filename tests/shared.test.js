@@ -34,31 +34,13 @@ test("builds a Codex desktop deep link with prompt and origin", () => {
   assert.equal(url.searchParams.get("originUrl"), "https://github.com/acme/repo.git");
 });
 
-test("prompt includes Bugbot finding, PR, and file location", () => {
+test("prompt is just the instruction followed by the Bugbot comment", () => {
   const prompt = api.buildPrompt({
-    pr: {
-      url: "https://github.com/acme/repo/pull/12",
-      owner: "acme",
-      repo: "repo",
-      number: "12",
-      kind: "pull",
-      title: "Fix waits",
-      branch: "feat/wait",
-    },
+    pr: { owner: "acme", repo: "repo", number: "12" },
     finding: "Bug: wait subtracts 3 seconds",
-    location: {
-      filePath: "src/wait.ts",
-      startLine: 10,
-      endLine: 18,
-      permalink: "https://github.com/acme/repo/blob/sha/src/wait.ts#L10-L18",
-    },
-    commentUrl: "https://github.com/acme/repo/pull/12#discussion_r1",
+    location: { filePath: "src/wait.ts", startLine: 10 },
   });
-  assert.match(prompt, /Fix this Cursor Bugbot finding/);
-  assert.match(prompt, /acme\/repo/);
-  assert.match(prompt, /feat\/wait/);
-  assert.match(prompt, /src\/wait\.ts:10-18/);
-  assert.match(prompt, /wait subtracts 3 seconds/);
+  assert.equal(prompt, "Verify this issue exists and fix it:\n\nBug: wait subtracts 3 seconds");
 });
 
 test("strips Cursor action labels from comment text", () => {
@@ -77,6 +59,22 @@ test("strips Cursor action labels from comment text", () => {
   );
 });
 
+test("strips the Bugbot review footer from comment text", () => {
+  assert.equal(
+    api.cleanCommentText({
+      cloneNode() {
+        return {
+          querySelectorAll() {
+            return [];
+          },
+          innerText: "Bug: boom\n\nReviewed by Cursor Bugbot for commit abc1234. Configure here.",
+        };
+      },
+    }),
+    "Bug: boom"
+  );
+});
+
 test("does not treat opaque Cursor data tokens as prompt text", () => {
   assert.equal(api.decodeCursorLinkPayload("https://cursor.com/open?data=placeholder"), null);
   const decoded = api.decodeCursorLinkPayload(
@@ -85,9 +83,10 @@ test("does not treat opaque Cursor data tokens as prompt text", () => {
   assert.equal(decoded.prompt, "Fix the bug.");
 });
 
-test("buildClaudeCodeUrl encodes the prompt and repo", () => {
-  const url = new URL(api.buildClaudeCodeUrl("Fix the wait timeout", "acme/repo"));
-  assert.equal(url.protocol, "claude-cli:");
+test("buildClaudeCodeUrl encodes the prompt", () => {
+  const url = new URL(api.buildClaudeCodeUrl("Fix the wait timeout"));
+  assert.equal(url.protocol, "claude:");
+  assert.equal(url.hostname, "code");
+  assert.equal(url.pathname, "/new");
   assert.equal(url.searchParams.get("q"), "Fix the wait timeout");
-  assert.equal(url.searchParams.get("repo"), "acme/repo");
 });

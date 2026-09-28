@@ -222,6 +222,7 @@
     text = text.replace(/\b(Fix in Cursor|Fix in Web|Open with Cursor|Open in Cursor|Open with Codex|Open in Web)\b/gi, "");
     text = text.replace(/Was this report helpful\?[\s\S]*$/i, "");
     text = text.replace(/BugBot free trial[\s\S]*$/i, "");
+    text = text.replace(/Reviewed by Cursor Bugbot for commit[\s\S]*$/i, "");
     text = text.replace(/Learn more in the Cursor dashboard\.?/gi, "");
     text = text.replace(/[ \t]*[•·|][ \t]*[•·|]/g, " ");
     text = text.replace(/[ \t]*[•·|][ \t]*/g, " ");
@@ -330,48 +331,8 @@
   }
 
   function buildPrompt(input) {
-    const pr = input.pr || {};
-    const locationInfo = input.location;
-    const parts = [];
-    parts.push("Fix this Cursor Bugbot finding from GitHub.");
-    parts.push("");
-    parts.push("Work on the repository and branch from this pull request. Inspect the cited files, reproduce the issue if possible, and implement a focused fix. Keep the change as small as possible.");
-    parts.push("");
-    parts.push("## Pull request");
-    if (pr.url) parts.push(`- URL: ${pr.url}`);
-    if (pr.owner && pr.repo) parts.push(`- Repository: ${pr.owner}/${pr.repo}`);
-    if (pr.number) parts.push(`- ${pr.kind === "issue" ? "Issue" : "PR"}: #${pr.number}`);
-    if (pr.title) parts.push(`- Title: ${pr.title}`);
-    if (pr.branch) parts.push(`- Branch: ${pr.branch}`);
-    if (input.commentUrl) parts.push(`- Comment: ${input.commentUrl}`);
-    if (locationInfo?.filePath) {
-      const lines =
-        locationInfo.startLine && locationInfo.endLine && locationInfo.startLine !== locationInfo.endLine
-          ? `${locationInfo.startLine}-${locationInfo.endLine}`
-          : locationInfo.startLine
-            ? String(locationInfo.startLine)
-            : "";
-      parts.push(`- File: ${locationInfo.filePath}${lines ? `:${lines}` : ""}`);
-      if (locationInfo.permalink) parts.push(`- Permalink: ${locationInfo.permalink}`);
-    }
-    parts.push("");
-    parts.push("## Bugbot finding");
-    parts.push(input.finding || "(no comment text found)");
-    if (input.cursorPrompt) {
-      parts.push("");
-      parts.push("## Prompt encoded in the Cursor button");
-      parts.push(input.cursorPrompt);
-    }
-    if (input.diffHunk) {
-      parts.push("");
-      parts.push("## Nearby diff context");
-      parts.push("```");
-      parts.push(input.diffHunk);
-      parts.push("```");
-    }
-    parts.push("");
-    parts.push("After the fix, summarize what changed and why.");
-    return truncate(parts.join("\n"), MAX_PROMPT_CHARS);
+    const finding = input.finding || "(no comment text found)";
+    return truncate(`Verify this issue exists and fix it:\n\n${finding}`, MAX_PROMPT_CHARS);
   }
 
   function buildDesktopUrl(prompt, originUrl) {
@@ -382,10 +343,9 @@
     return url.toString();
   }
 
-  function buildClaudeCodeUrl(prompt, repo) {
-    const url = new URL("claude-cli://open");
+  function buildClaudeCodeUrl(prompt) {
+    const url = new URL("claude://code/new");
     url.searchParams.set("q", truncate(prompt, MAX_DEEPLINK_PROMPT_CHARS));
-    if (repo) url.searchParams.set("repo", repo);
     return url.toString();
   }
 

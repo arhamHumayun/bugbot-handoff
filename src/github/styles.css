@@ -1,16 +1,28 @@
 .codex-bugbot-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-sizing: border-box;
+  height: 28px;
+  margin-left: 4px;
+  padding: 0 8px;
+  border: 1px solid var(--borderColor-default, #30363d);
+  border-radius: 6px;
+  background: var(--bgColor-muted, rgba(128, 128, 128, 0.1));
+  color: var(--fgColor-default, inherit) !important;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  vertical-align: top;
   cursor: pointer;
-  font-weight: 600;
-  text-decoration: none;
+  text-decoration: none !important;
   white-space: nowrap;
+  user-select: none;
 }
 
 .codex-bugbot-open:hover {
-  text-decoration: underline;
-}
-
-.codex-bugbot-sep {
-  white-space: pre;
+  background: var(--bgColor-neutral-muted, rgba(128, 128, 128, 0.2));
+  text-decoration: none !important;
 }
 
 .codex-bugbot-toast {
