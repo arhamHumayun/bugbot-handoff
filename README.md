@@ -16,7 +16,9 @@ Open a GitHub PR with a Bugbot review. Beside **Fix in Cursor** you should see *
 - **Codex Desktop** (default): launches `codex://new?prompt=...&originUrl=...` so the ChatGPT/Codex app opens with the comment as the composer prompt and tries to match the GitHub repo workspace.
 - **Codex Web**: opens `chatgpt.com/codex` and pastes the same prompt into the composer.
 
-Choose the destination from the extension popup. The full prompt is also copied to the clipboard.
+An **Open with Claude Code** button appears next to it and launches `claude-cli://open?q=...&repo=owner/repo`, so Claude Code opens with the finding as the initial prompt (Claude Code must be installed and have registered its URL handler).
+
+Choose the Codex destination from the extension popup. The full prompt is also copied to the clipboard.
 
 ## How it finds comments
 

@@ -15,14 +15,14 @@ function randomId() {
 
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   if (message?.type !== "OPEN_CODEX") return undefined;
-  openCodex(message.payload)
+  openHandoff(message.payload)
     .then(() => sendResponse({ ok: true }))
     .catch((error) => sendResponse({ ok: false, error: error instanceof Error ? error.message : String(error) }));
   return true;
 });
 
-async function openCodex(payload) {
-  if (!payload?.prompt) throw new Error("No Bugbot prompt to send to Codex.");
+async function openHandoff(payload) {
+  if (!payload?.prompt) throw new Error("No Bugbot prompt to send.");
   const settings = await getSettings();
   const id = randomId();
   await chrome.storage.session.set({
@@ -30,6 +30,8 @@ async function openCodex(payload) {
       id,
       prompt: payload.prompt,
       originUrl: payload.originUrl || "",
+      repo: payload.repo || "",
+      target: payload.target === "claude" ? "claude" : "codex",
       destination: settings.destination,
       webBaseUrl: settings.webBaseUrl,
       createdAt: Date.now(),

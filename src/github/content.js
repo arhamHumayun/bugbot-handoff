@@ -12,13 +12,14 @@ function toast(message) {
   window.setTimeout(() => el.remove(), 4200);
 }
 
-function createCodexButton(cursorLink) {
+function createOpenButton(cursorLink, target) {
+  const label = target === "claude" ? "Claude Code" : "Codex";
   const button = document.createElement("a");
   button.className = api.BUTTON_CLASS;
   button.href = "#";
   button.role = "button";
-  button.textContent = "Open with Codex";
-  button.title = "Open this Bugbot finding in Codex with the comment context";
+  button.textContent = `Open with ${label}`;
+  button.title = `Open this Bugbot finding in ${label} with the comment context`;
   button.setAttribute(api.MARKER, "button");
   for (const cls of cursorLink.classList) {
     if (/btn|button/i.test(cls) && cls !== api.BUTTON_CLASS) {
@@ -29,7 +30,7 @@ function createCodexButton(cursorLink) {
   button.addEventListener("click", async (event) => {
     event.preventDefault();
     event.stopPropagation();
-    const payload = api.collectHandoff(cursorLink, document, location);
+    const payload = { ...api.collectHandoff(cursorLink, document, location), target };
     try {
       await navigator.clipboard.writeText(payload.prompt);
     } catch {
@@ -37,18 +38,18 @@ function createCodexButton(cursorLink) {
     }
     if (!globalThis.chrome?.runtime?.id) {
       document.dispatchEvent(new CustomEvent("codex-bugbot:handoff", { detail: payload }));
-      toast("Built Codex prompt from this Bugbot comment.");
+      toast(`Built ${label} prompt from this Bugbot comment.`);
       return;
     }
     try {
       const response = await chrome.runtime.sendMessage({ type: "OPEN_CODEX", payload });
       if (response?.ok) {
-        toast("Opening Codex with this Bugbot comment.");
+        toast(`Opening ${label} with this Bugbot comment.`);
       } else {
-        toast(response?.error || "Could not open Codex.");
+        toast(response?.error || `Could not open ${label}.`);
       }
     } catch (error) {
-      toast(error instanceof Error ? error.message : "Could not open Codex.");
+      toast(error instanceof Error ? error.message : `Could not open ${label}.`);
     }
   });
 
@@ -82,7 +83,13 @@ function injectGroup(link) {
   sep.textContent = api.detectSeparator(last.parentElement, group);
 
   last.parentNode.insertBefore(sep, last.nextSibling);
-  last.parentNode.insertBefore(createCodexButton(group[0] || link), sep.nextSibling);
+  const source = group[0] || link;
+  const codexButton = createOpenButton(source, "codex");
+  last.parentNode.insertBefore(codexButton, sep.nextSibling);
+
+  const claudeSep = sep.cloneNode(true);
+  last.parentNode.insertBefore(claudeSep, codexButton.nextSibling);
+  last.parentNode.insertBefore(createOpenButton(source, "claude"), claudeSep.nextSibling);
 }
 
 function scan() {

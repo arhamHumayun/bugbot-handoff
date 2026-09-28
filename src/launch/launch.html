@@ -14,13 +14,15 @@
       <pre id="preview" hidden></pre>
       <div class="actions">
         <button id="desktop" type="button">Open Codex Desktop</button>
+        <button id="claude" type="button" hidden>Open Claude Code</button>
         <button id="web" type="button" class="secondary">Open Codex Web</button>
         <button id="copy" type="button" class="secondary">Copy prompt</button>
       </div>
       <p class="hint">
         Desktop uses the <code>codex://</code> deep link with this comment as the
         initial prompt. Web opens chatgpt.com/codex and pastes the same prompt
-        into the composer.
+        into the composer. Claude Code uses the <code>claude-cli://</code> deep link
+        with the repository and this comment as the initial prompt.
       </p>
     </main>
     <script src="../lib/shared.js"></script>

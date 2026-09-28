@@ -6,6 +6,8 @@ const previewEl = document.getElementById("preview");
 const desktopBtn = document.getElementById("desktop");
 const webBtn = document.getElementById("web");
 const copyBtn = document.getElementById("copy");
+const claudeBtn = document.getElementById("claude");
+const titleEl = document.querySelector("h1");
 
 let handoff = null;
 
@@ -23,6 +25,13 @@ async function loadHandoff() {
   previewEl.hidden = false;
   previewEl.textContent = payload.prompt;
   return payload;
+}
+
+function openClaudeCode() {
+  if (!handoff) return;
+  const url = api.buildClaudeCodeUrl(handoff.prompt, handoff.repo);
+  setStatus("Launching Claude Code. If nothing happens, make sure Claude Code is installed and has run once — then copy the prompt below.");
+  window.location.href = url;
 }
 
 function openDesktop() {
@@ -52,6 +61,14 @@ async function copyPrompt() {
 async function autoOpen() {
   handoff = await loadHandoff();
   if (!handoff) return;
+  if (handoff.target === "claude") {
+    titleEl.textContent = "Opening Claude Code";
+    desktopBtn.hidden = true;
+    webBtn.hidden = true;
+    claudeBtn.hidden = false;
+    openClaudeCode();
+    return;
+  }
   const destination = handoff.destination || "desktop";
   if (destination === "web") {
     openWeb();
@@ -66,6 +83,7 @@ async function autoOpen() {
 }
 
 desktopBtn.addEventListener("click", openDesktop);
+claudeBtn.addEventListener("click", openClaudeCode);
 webBtn.addEventListener("click", openWeb);
 copyBtn.addEventListener("click", () => {
   copyPrompt().catch(() => setStatus("Could not copy the prompt."));
