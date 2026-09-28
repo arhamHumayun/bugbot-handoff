@@ -1,10 +1,10 @@
 {
   "manifest_version": 3,
-  "name": "Open Bugbot in Codex",
+  "name": "Bugbot Handoff",
   "description": "Adds Open with Codex and Open with Claude Code buttons next to Cursor Bugbot comments on GitHub and sends the finding into Codex or Claude Code.",
   "version": "1.0.0",
   "action": {
-    "default_title": "Open Bugbot in Codex",
+    "default_title": "Bugbot Handoff",
     "default_icon": {
       "16": "icons/icon16.png",
       "32": "icons/icon32.png",
