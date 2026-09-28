@@ -382,6 +382,13 @@
     return url.toString();
   }
 
+  function buildClaudeCodeUrl(prompt, repo) {
+    const url = new URL("claude-cli://open");
+    url.searchParams.set("q", truncate(prompt, MAX_DEEPLINK_PROMPT_CHARS));
+    if (repo) url.searchParams.set("repo", repo);
+    return url.toString();
+  }
+
   function buildWebUrl(prompt, webBaseUrl, originUrl) {
     const url = new URL(webBaseUrl || DEFAULTS.webBaseUrl);
     const usable = truncate(prompt, MAX_DEEPLINK_PROMPT_CHARS);
@@ -415,6 +422,7 @@
     return {
       prompt,
       originUrl: pr.originUrl,
+      repo: pr.owner && pr.repo ? `${pr.owner}/${pr.repo}` : "",
       repoUrl: pr.repoUrl,
       prUrl: pr.url,
       branch: pr.branch,
@@ -442,6 +450,7 @@
     buildPrompt,
     buildDesktopUrl,
     buildWebUrl,
+    buildClaudeCodeUrl,
     decodeCursorLinkPayload,
     parseBlobLocation,
     getPrContext,

@@ -84,3 +84,10 @@ test("does not treat opaque Cursor data tokens as prompt text", () => {
   );
   assert.equal(decoded.prompt, "Fix the bug.");
 });
+
+test("buildClaudeCodeUrl encodes the prompt and repo", () => {
+  const url = new URL(api.buildClaudeCodeUrl("Fix the wait timeout", "acme/repo"));
+  assert.equal(url.protocol, "claude-cli:");
+  assert.equal(url.searchParams.get("q"), "Fix the wait timeout");
+  assert.equal(url.searchParams.get("repo"), "acme/repo");
+});
