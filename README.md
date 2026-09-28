@@ -2,6 +2,8 @@
 
 Chrome extension that hands Cursor Bugbot findings on GitHub pull requests off to the coding agent of your choice. It adds **Fix in Codex**, **Fix in Claude**, and **Copy prompt** buttons next to Bugbot's **Fix in Cursor** / **Open with Cursor** controls. Each one packages the finding, file location, nearby diff, and PR metadata into a prompt.
 
+![Fix in Cursor, Fix in Web, Fix in Codex, Fix in Claude, and Copy prompt buttons](docs/buttons.png)
+
 ## Install
 
 1. Open `chrome://extensions`
